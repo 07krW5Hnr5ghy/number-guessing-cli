@@ -11,9 +11,20 @@ const LEVELS = {
     hard:'3'
 };
 
-// helper function
+// helper functions
 function randomIntFromInterval(min,max){
     return Math.floor(Math.random() * (max-min+1)+min);
+}
+
+function getHint(targetNumber){
+    const isEven = targetNumber % 2 === 0 ? "even" : "odd";
+    const divisors = [];
+    for(let i = 1;i <= Math.sqrt(targetNumber);i++){
+        if(targetNumber%i===0){
+            divisors.push(i,targetNumber/i);
+        }
+    }
+    return `Hint: The number is ${isEven} and divisible by ${[...new Set(divisors)].join(", ")}.`;
 }
 
 const startGame = () => {
@@ -49,11 +60,19 @@ const startGame = () => {
         const targetNumber = randomIntFromInterval(1,100);
 
         let attempts = 0;
+        const startTime = Date.now();
 
         const guessNumber = () => {
-            rl.question("Enter your guess: ",(guess)=>{
+            rl.question("Enter your guess (or type 'hint' for a hint): ",(input)=>{
+
+                if(input.toLowerCase()==="hint"){
+                    console.log(getHint(targetNumber));
+                    return guessNumber();
+                }
+                
                 attempts++;
-                const userGuess = parseInt(guess,10);
+                const userGuess = parseInt(input,10);
+
                 if(isNaN(userGuess)||userGuess<1||userGuess>100){
                     console.log("Invalid input! Please enter a number between 1 and 100.");
                     attempts--;
@@ -61,7 +80,10 @@ const startGame = () => {
                 }
 
                 if(userGuess===targetNumber){
+                    const endTime = Date.now();
+                    const duration = ((endTime-startTime)/1000).toFixed(2);
                     console.log(`Congratulations! You guessed the correct number in ${attempts} attempts.`);
+                    console.log(`It took you ${duration} seconds.`);
                     return playAgain();
                 }else if(userGuess<targetNumber){
                     console.log("Incorrect! The number is greater than your guess.");
