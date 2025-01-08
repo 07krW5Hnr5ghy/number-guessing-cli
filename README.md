@@ -87,7 +87,7 @@ A simple CLI-based number guessing game built using Node.js. The computer random
     Thanks for playing! Goodbye!
     ```
 
-## **File Structur**
+## **File Structure**
 
     number-guessing-cli/
     │
